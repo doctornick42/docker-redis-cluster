@@ -5,6 +5,8 @@ services:
      IP: ${REDIS_CLUSTER_IP}
      SENTINEL: ${REDIS_USE_SENTINEL}
      STANDALONE: ${REDIS_USE_STANDALONE}
+     ANNOUNCE_IP: ${REDIS_ANNOUNCE_IP}
+     ANNOUNCE_PORT: ${REDIS_ANNOUNCE_PORT}
     build:
       context: .
       args:

@@ -9,7 +9,17 @@ if [ "$1" = 'redis-cluster' ]; then
       max_port=7007
     fi
 
+    announce_ip="127.0.0.1"
+    if [[ ! -z "${ANNOUNCE_IP}" ]]; then
+      announce_ip=${ANNOUNCE_IP}
+    fi
+
     for port in `seq 7000 $max_port`; do
+      announce_port = ${port}
+      if [[ ! -z "${ANNOUNCE_PORT}" ]]; then
+        announce_port=${ANNOUNCE_PORT}
+      fi
+
       mkdir -p /redis-conf/${port}
       mkdir -p /redis-data/${port}
 
@@ -26,14 +36,14 @@ if [ "$1" = 'redis-cluster' ]; then
       fi
 
       if [ "$port" -lt "7006" ]; then
-        PORT=${port} envsubst < /redis-conf/redis-cluster.tmpl > /redis-conf/${port}/redis.conf
+        PORT=${port} ANNOUNCE_IP=${announce_ip} ANNOUNCE_PORT=${announce_port} envsubst < /redis-conf/redis-cluster.tmpl > /redis-conf/${port}/redis.conf
       else
-        PORT=${port} envsubst < /redis-conf/redis.tmpl > /redis-conf/${port}/redis.conf
+        PORT=${port} ANNOUNCE_IP=${announce_ip} ANNOUNCE_PORT=${announce_port} envsubst < /redis-conf/redis.tmpl > /redis-conf/${port}/redis.conf
       fi
 
       if [ "$port" -lt "7003" ]; then
         if [ "$SENTINEL" = "true" ]; then
-          PORT=${port} SENTINEL_PORT=$((port - 2000)) envsubst < /redis-conf/sentinel.tmpl > /redis-conf/sentinel-${port}.conf
+          PORT=${port} ANNOUNCE_IP=${announce_ip} ANNOUNCE_PORT=${announce_port} SENTINEL_PORT=$((port - 2000)) envsubst < /redis-conf/sentinel.tmpl > /redis-conf/sentinel-${port}.conf
           cat /redis-conf/sentinel-${port}.conf
         fi
       fi
