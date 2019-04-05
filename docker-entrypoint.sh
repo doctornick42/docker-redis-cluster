@@ -10,15 +10,12 @@ if [ "$1" = 'redis-cluster' ]; then
     fi
 
     announce_ip="127.0.0.1"
-    if [[ ! -z "${ANNOUNCE_IP}" ]]; then
+    if [ ! -z "${ANNOUNCE_IP}" ]; then
       announce_ip=${ANNOUNCE_IP}
     fi
 
     for port in `seq 7000 $max_port`; do
-      announce_port = ${port}
-      if [[ ! -z "${ANNOUNCE_PORT}" ]]; then
-        announce_port=${ANNOUNCE_PORT}
-      fi
+      announce_port=${port}
 
       mkdir -p /redis-conf/${port}
       mkdir -p /redis-data/${port}
