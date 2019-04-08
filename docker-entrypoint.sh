@@ -14,26 +14,35 @@ if [ "$1" = 'redis-cluster' ]; then
       announce_ip=${ANNOUNCE_IP}
     fi
 
+    password=""
+    master_auth=""
+    if [ ! -z "${PASSWORD}" ]; then
+      password="requirepass ${PASSWORD}"
+      master_auth="masterauth ${PASSWORD}"
+    fi
+
     for port in `seq 7000 $max_port`; do
       announce_port=${port}
 
       mkdir -p /redis-conf/${port}
       mkdir -p /redis-data/${port}
 
-      if [ -e /redis-data/${port}/nodes.conf ]; then
-        rm /redis-data/${port}/nodes.conf
-      fi
+      if [ "$CLEAR_STATE" = "true" ]; then
+          if [ -e /redis-data/${port}/nodes.conf ]; then
+            rm /redis-data/${port}/nodes.conf
+          fi
 
-      if [ -e /redis-data/${port}/dump.rdb ]; then
-        rm /redis-data/${port}/dump.rdb
-      fi
+          if [ -e /redis-data/${port}/dump.rdb ]; then
+            rm /redis-data/${port}/dump.rdb
+          fi
 
-      if [ -e /redis-data/${port}/appendonly.aof ]; then
-        rm /redis-data/${port}/appendonly.aof
+          if [ -e /redis-data/${port}/appendonly.aof ]; then
+            rm /redis-data/${port}/appendonly.aof
+          fi
       fi
 
       if [ "$port" -lt "7006" ]; then
-        PORT=${port} ANNOUNCE_IP=${announce_ip} ANNOUNCE_PORT=${announce_port} envsubst < /redis-conf/redis-cluster.tmpl > /redis-conf/${port}/redis.conf
+        PORT=${port} ANNOUNCE_IP=${announce_ip} ANNOUNCE_PORT=${announce_port} PASSWORD=${password} MASTER_AUTH=${master_auth} envsubst < /redis-conf/redis-cluster.tmpl > /redis-conf/${port}/redis.conf
       else
         PORT=${port} ANNOUNCE_IP=${announce_ip} ANNOUNCE_PORT=${announce_port} envsubst < /redis-conf/redis.tmpl > /redis-conf/${port}/redis.conf
       fi

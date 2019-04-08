@@ -7,6 +7,8 @@ services:
      STANDALONE: ${REDIS_USE_STANDALONE}
      ANNOUNCE_IP: ${REDIS_ANNOUNCE_IP}
      ANNOUNCE_PORT: ${REDIS_ANNOUNCE_PORT}
+     PASSWORD: ${REDIS_PASSWORD}
+     CLEAR_STATE: ${REDIS_CLEAR_STATE}
     build:
       context: .
       args:
