@@ -6,14 +6,15 @@ services:
      SENTINEL: ${REDIS_USE_SENTINEL}
      STANDALONE: ${REDIS_USE_STANDALONE}
      ANNOUNCE_IP: ${REDIS_ANNOUNCE_IP}
+     NOTIFY_EVENTS: ${REDIS_NOTIFY_EVENTS}
      ANNOUNCE_PORT: ${REDIS_ANNOUNCE_PORT}
      PASSWORD: ${REDIS_PASSWORD}
      CLEAR_STATE: ${REDIS_CLEAR_STATE}
     build:
       context: .
       args:
-        redis_version: '5.0.2'
+        redis_version: '5.0.5'
     hostname: server
     ports:
-      - '7000-7007:7000-7007'
-      - '5000-5002:5000-5002'
+      - '7000-7050:7000-7050'
+      - '5000-5010:5000-5010'

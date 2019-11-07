@@ -14,6 +14,11 @@ if [ "$1" = 'redis-cluster' ]; then
       announce_ip=${ANNOUNCE_IP}
     fi
 
+    notify_events=""
+    if [ ! -z "${NOTIFY_EVENTS}" ]; then
+      notify_events=${NOTIFY_EVENTS}
+    fi
+
     password=""
     master_auth=""
     if [ ! -z "${PASSWORD}" ]; then
@@ -42,14 +47,14 @@ if [ "$1" = 'redis-cluster' ]; then
       fi
 
       if [ "$port" -lt "7006" ]; then
-        PORT=${port} ANNOUNCE_IP=${announce_ip} ANNOUNCE_PORT=${announce_port} PASSWORD=${password} MASTER_AUTH=${master_auth} envsubst < /redis-conf/redis-cluster.tmpl > /redis-conf/${port}/redis.conf
+        PORT=${port} ANNOUNCE_IP=${announce_ip} ANNOUNCE_PORT=${announce_port} NOTIFY_EVENTS=${notify_events} PASSWORD=${password} MASTER_AUTH=${master_auth} envsubst < /redis-conf/redis-cluster.tmpl > /redis-conf/${port}/redis.conf
       else
-        PORT=${port} ANNOUNCE_IP=${announce_ip} ANNOUNCE_PORT=${announce_port} envsubst < /redis-conf/redis.tmpl > /redis-conf/${port}/redis.conf
+        PORT=${port} envsubst < /redis-conf/redis.tmpl > /redis-conf/${port}/redis.conf
       fi
 
       if [ "$port" -lt "7003" ]; then
         if [ "$SENTINEL" = "true" ]; then
-          PORT=${port} ANNOUNCE_IP=${announce_ip} ANNOUNCE_PORT=${announce_port} SENTINEL_PORT=$((port - 2000)) envsubst < /redis-conf/sentinel.tmpl > /redis-conf/sentinel-${port}.conf
+          PORT=${port} SENTINEL_PORT=$((port - 2000)) envsubst < /redis-conf/sentinel.tmpl > /redis-conf/sentinel-${port}.conf
           cat /redis-conf/sentinel-${port}.conf
         fi
       fi
