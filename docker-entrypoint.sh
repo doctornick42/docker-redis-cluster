@@ -9,9 +9,9 @@ if [ "$1" = 'redis-cluster' ]; then
       max_port=7007
     fi
 
-    announce_ip="127.0.0.1"
+    announce_ip=""
     if [ ! -z "${ANNOUNCE_IP}" ]; then
-      announce_ip=${ANNOUNCE_IP}
+      announce_ip="cluster-announce-ip ${ANNOUNCE_IP}"
     fi
 
     notify_events=""
@@ -27,7 +27,6 @@ if [ "$1" = 'redis-cluster' ]; then
     fi
 
     for port in `seq 7000 $max_port`; do
-      announce_port=${port}
 
       mkdir -p /redis-conf/${port}
       mkdir -p /redis-data/${port}
@@ -47,7 +46,7 @@ if [ "$1" = 'redis-cluster' ]; then
       fi
 
       if [ "$port" -lt "7006" ]; then
-        PORT=${port} ANNOUNCE_IP=${announce_ip} ANNOUNCE_PORT=${announce_port} NOTIFY_EVENTS=${notify_events} PASSWORD=${password} MASTER_AUTH=${master_auth} envsubst < /redis-conf/redis-cluster.tmpl > /redis-conf/${port}/redis.conf
+        PORT=${port} ANNOUNCE_IP=${announce_ip} NOTIFY_EVENTS=${notify_events} PASSWORD=${password} MASTER_AUTH=${master_auth} envsubst < /redis-conf/redis-cluster.tmpl > /redis-conf/${port}/redis.conf
       else
         PORT=${port} envsubst < /redis-conf/redis.tmpl > /redis-conf/${port}/redis.conf
       fi

@@ -13,6 +13,7 @@ cluster-config-file nodes.conf
 cluster-node-timeout 5000
 appendonly yes
 dir /redis-data/${PORT}
-cluster-announce-ip ${ANNOUNCE_IP}
+
+${ANNOUNCE_IP}
 
 notify-keyspace-events ${NOTIFY_EVENTS}
